@@ -1,3 +1,5 @@
+<%- include('partials/header') %>
+
 <form action="/blogs/<%= blog._id %>?_method=PUT" method="POST">
     <div>
         <label>Title</label>
@@ -15,3 +17,5 @@
         <button>Submit</button>
     </div>
 </form>
+
+<%- include('partials/footer') %>
