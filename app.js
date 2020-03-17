@@ -14,11 +14,6 @@ let BlogSchema = mongoose.Schema({
 
 let Blog = mongoose.model('Blog',BlogSchema);
 
-Blog.create({
-    title:'First Image',
-    image:'https://images.unsplash.com/photo-1496449903678-68ddcb189a24?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60',
-    body:"This is the sign you've been looking for neon signage"
-});
 app.set('view engine','ejs');
 app.use(bodyParser.urlencoded({extended:true}));
 
@@ -32,6 +27,25 @@ app.get('/blogs',function(req, res) {
             console.log(err);
         } else {
             res.render('index',{blogs:blogs});
+        }
+    });
+});
+
+app.get('/blogs/new',function(req,res) {
+    res.render('new');
+});
+
+app.post('/blogs',function(req,res) {
+    let blog = {
+        title: req.body.blog.title,
+        image: req.body.blog.image,
+        body: req.body.blog.body
+    }
+    Blog.create(blog,function(err,blogCreated) {
+        if(err) {
+            console.log(err);
+        } else {
+            res.redirect('/blogs');
         }
     });
 });
