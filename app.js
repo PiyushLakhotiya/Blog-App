@@ -1,7 +1,8 @@
-const bodyParser = require('body-parser'),
-      mongoose   = require('mongoose'),
-      express    = require('express'),
-      app        = express();
+const methodOverride = require('method-override'),
+      bodyParser     = require('body-parser'),
+      mongoose       = require('mongoose'),
+      express        = require('express'),
+      app            = express();
 
 mongoose.connect('mongodb://localhost:27017/Blog_App',{useNewUrlParser:true,useUnifiedTopology:true});
 
@@ -13,9 +14,11 @@ let BlogSchema = mongoose.Schema({
 });
 
 let Blog = mongoose.model('Blog',BlogSchema);
+mongoose.set('useFindAndModify', false);
 
 app.set('view engine','ejs');
 app.use(bodyParser.urlencoded({extended:true}));
+app.use(methodOverride('_method'));
 
 app.get('/',function(req, res) {
     res.redirect('/blogs');
@@ -59,6 +62,32 @@ app.get('/blogs/:id',function(req,res) {
         }
     });
 });
+
+app.get('/blogs/:id/edit',function(req,res) {
+    Blog.findById(req.params.id,function(err,foundBlog) {
+        if(err) {
+            console.log(err);
+        } else {
+            res.render('edit',{blog: foundBlog});
+        }
+    });
+});
+
+app.put('/blogs/:id',function(req,res) {
+    let updatedBlog = {
+        title : req.body.blog.title,
+        image : req.body.blog.image,
+        body  : req.body.blog.body
+    };
+    Blog.findByIdAndUpdate(req.params.id,updatedBlog,function(err,updateBlog) {
+        if(err) {
+            console.log(err);
+        } else {
+            res.redirect('/blogs/'+ req.params.id);
+        }
+    });
+});
+
 
 app.listen(3000,function(){
     console.log("Server Started!!!");
