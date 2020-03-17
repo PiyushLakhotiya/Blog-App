@@ -88,6 +88,15 @@ app.put('/blogs/:id',function(req,res) {
     });
 });
 
+app.delete('/blogs/:id',function(req,res) {
+    Blog.findByIdAndRemove(req.params.id,function(err,deleteBlog) {
+        if(err) {
+            console.log(err);
+        } else {
+            res.redirect('/blogs');     
+        }
+    });
+});
 
 app.listen(3000,function(){
     console.log("Server Started!!!");
